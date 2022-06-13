@@ -17,12 +17,12 @@ simulate_perfect <- function(phi, n, tol = 0.01, max_iters = 100) {
     return(cor.test(as.numeric(data$x), as.numeric(data$y))$p.value)
 }
 
-simulate_distort <- function(phi, n, tp, tn, Q = 0.7, tol = 0.03) {
+simulate_distort <- function(phi, n, tpr, tnr, Q = 0.7, tol = 0.03) {
     data <- NA
     while(!is.data.frame(data)) {
         data <- estimate_phi(phi, n, tol = tol)
     }
-    dx1 <- distort_gt(data$x, tp = tp, tn = tn)
+    dx1 <- distort_gt(data$x, tpr = tpr, tnr = tnr)
     dx2 <- distort_gt(dx1, Q = Q)
     return(cor.test(as.numeric(dx2), as.numeric(data$y))$p.value)
 }
@@ -52,8 +52,10 @@ cal_bigphi <- function(rho, n, tpr, tnr, Q, alpha = 0.05, tol = 0.01, rep_n = 20
     tpv <- .gen_p(tpr, pn, rep_n)
     tnv <- .gen_p(tnr, nn, rep_n)
     Qv <- .gen_p(Q, Qn, rep_n)
-    args <- list(phi = esv, tp = tpv, tn = tnv, Q = Qv, tol = tol, n = n)
+    args <- list(phi = esv, tpr = tpv, tnr = tnv, Q = Qv, tol = tol, n = n)
     obs_p <- furrr::future_pmap_dbl(args, simulate_distort, .options = furrr::furrr_options(seed = seed), .progress = .progress)
+    ## obs_p <- purrr::pmap_dbl(args, simulate_distort)
+
     beta <- sum(obs_p > alpha) / rep_n
     return(1 - beta)
 }
