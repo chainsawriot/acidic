@@ -1,6 +1,6 @@
 require(tidyverse)
 require(ggplot2)
-source("emulator.R")
+require(acidic)
 require(furrr)
 plan(multisession)
 
@@ -17,7 +17,7 @@ res <- list()
 
 for (i in sample(seq_len(nrow(scenarios)))) {
     print(i)
-    res[[i]] <- furrr::future_map_dfr(rep(scenarios$es[i], rep_n), ~ simulate_phi(., n = scenarios$ss[i], z = scenarios$z[i], gen_f1, tol = tol, Q = Q), .progress = TRUE, .options = furrr_options(seed = 123))
+    res[[i]] <- furrr::future_map_dfr(rep(scenarios$es[i], rep_n), ~ simulate_phi(., n = scenarios$ss[i], z = scenarios$z[i], acidic::gen_f1, tol = tol, Q = Q), .progress = TRUE, .options = furrr_options(seed = 123))
     saveRDS(res, "f1_res.RDS")
 }
 
