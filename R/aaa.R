@@ -74,6 +74,11 @@ gen_x <- function(prob, size = 1) {
     }
 }
 
+#' Distort the ground truth data
+#' @param x a logical vector
+#' @param tpr true positive rate
+#' @param tnr true negative rate
+#' @param Q coder agreement
 #' @examples
 #' mod <- gen_acc(.9, .3)
 #' ground_truth <- gen_x(0.3, size = 100)
@@ -96,6 +101,7 @@ distort_gt <- function(x, tpr = 1, tnr = 1, Q = NULL) {
 ##     tibble::tibble(f1 = f1, beta1 = beta1, beta0 = beta0, prev = prev, n = n, obeta1 = c1[2], obeta0 = c1[1], dbeta1 = c2[2], dbeta0 = c2[1])
 ## }
 
+#' Stimulate the results given the predicate function
 #' @param z an accuarcy metric
 #' @param fun a function that generate TP and TN
 #' @param x a data.frame of generated dataset
